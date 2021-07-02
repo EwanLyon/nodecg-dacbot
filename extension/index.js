@@ -10,7 +10,7 @@ let audioBuffer;
 module.exports = function (nodecg) {
 
 	let currentMembers = [];
-	const memberList = nodecg.Replicant('memberList', { persistent: false });
+	const memberList = nodecg.Replicant('memberList', { persistent: false, defaultValue: [] });
 	connection = undefined;
 
 	let roleID = nodecg.bundleConfig.roleID;
