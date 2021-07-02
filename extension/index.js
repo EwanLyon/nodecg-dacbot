@@ -5,6 +5,9 @@ const Discord = require('discord.js');
 const command = require('./commands');
 
 let silence, connection;
+let audioBuffer;
+
+
 
 module.exports = function (nodecg) {
 
@@ -22,8 +25,6 @@ module.exports = function (nodecg) {
 	connection = undefined;
 
 	let roleID = nodecg.bundleConfig.roleID;
-
-	const hostStreamRep = nodecg.Replicant('hostStream', { persistent: false });
 
 	const client = new Discord.Client();
 	client.once('ready', () => {
@@ -196,7 +197,12 @@ module.exports = function (nodecg) {
 			})
 
 			if (currentMembers.length > 0) {
-				hostStreamRep.value = connection.receiver.createStream(currentMembers[0].id, { mode: 'pcm', end: 'manual' });
+				audioBuffer = connection.receiver.createStream(currentMembers[0].id, { mode: 'pcm' });
+
+				audioBuffer.on('data', (data) => {
+					nodecg.sendMessage('audio-buffer', data);
+					// console.log(data);
+				});
 			}
 			// for (let i = 0; i < currentMembers.length; i++) {
 			// 	currentMembers[i].audio = connection.receiver.createStream(currentMembers[i].id, { mode: 'pcm', end: 'manual' });
@@ -227,7 +233,7 @@ module.exports = function (nodecg) {
 		currentMembers = [];
 		// mixer = [];
 		// speaker = [];
-		hostStreamRep.value = undefined;
+		audioBuffer = undefined;
 		connection = undefined;
 		clearInterval(silence)
 	}
