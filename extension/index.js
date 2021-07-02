@@ -71,7 +71,7 @@ module.exports = function (nodecg) {
 			client.channels.cache.get(channelID).members.forEach((member) => {
 				if (member.user.id !== client.user.id) {
 					currentMembers.push({ id: member.user.id });
-					memberList.push('Member')
+					memberList.value.push('Member')
 				}
 			})
 
