@@ -26,6 +26,8 @@ module.exports = function (nodecg) {
 
 	let roleID = nodecg.bundleConfig.roleID;
 
+	const audioBufferRep = nodecg.Replicant('audioBuffer', { persistent: false })
+
 	const client = new Discord.Client();
 	client.once('ready', () => {
 		nodecg.log.info('DACBot is now online. For help, type @' + client.user.username + ' help')
@@ -197,10 +199,11 @@ module.exports = function (nodecg) {
 			})
 
 			if (currentMembers.length > 0) {
-				audioBuffer = connection.receiver.createStream(currentMembers[0].id, { mode: 'pcm' });
+				audioBuffer = connection.receiver.createStream(currentMembers[0].id, { mode: 'pcm', end: 'manual' });
 
 				audioBuffer.on('data', (data) => {
 					nodecg.sendMessage('audio-buffer', data);
+					// audioBufferRep.value = new Uint8Array(data);
 					// console.log(data);
 				});
 			}
