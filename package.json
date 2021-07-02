@@ -17,12 +17,6 @@
     ]
   },
   "dependencies": {
-    "@polymer/paper-button": "^3.0.1",
-    "@polymer/paper-slider": "^3.0.1",
-    "@polymer/polymer": "^3.4.1",
-    "audio-mixer": "^2.1.4",
-    "discord.js": "^12.5.3",
-    "naudiodon": "^2.3.4",
-    "speaker": "github:nacgarg/node-speaker"
+    "discord.js": "^12.5.3"
   }
 }
