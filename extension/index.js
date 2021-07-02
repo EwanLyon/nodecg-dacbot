@@ -10,6 +10,7 @@ let audioBuffer;
 module.exports = function (nodecg) {
 
 	let currentMembers = [];
+	const memberList = nodecg.Replicant('memberList', { persistent: false });
 	connection = undefined;
 
 	let roleID = nodecg.bundleConfig.roleID;
@@ -62,7 +63,7 @@ module.exports = function (nodecg) {
 			}
 		});
 	});
-	
+
 	async function record(channelID) {
 		connection = await client.channels.cache.get(channelID).join();
 
@@ -70,6 +71,7 @@ module.exports = function (nodecg) {
 			client.channels.cache.get(channelID).members.forEach((member) => {
 				if (member.user.id !== client.user.id) {
 					currentMembers.push({ id: member.user.id });
+					memberList.push('Member')
 				}
 			})
 
@@ -95,6 +97,7 @@ module.exports = function (nodecg) {
 			connection.channel.leave();
 		}
 		currentMembers = [];
+		memberList.value = [];
 		audioBuffer = undefined;
 		connection = undefined;
 		clearInterval(silence);
