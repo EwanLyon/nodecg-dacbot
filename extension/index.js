@@ -1,10 +1,10 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const Speaker = require('speaker');
-const AudioMixer = require('audio-mixer')
+// const Speaker = require('speaker');
+// const AudioMixer = require('audio-mixer')
 const command = require('./commands');
 
-let silence, connection, mixer, speaker;
+let silence, connection;
 
 module.exports = function (nodecg) {
 
@@ -22,6 +22,8 @@ module.exports = function (nodecg) {
 	connection = undefined;
 
 	let roleID = nodecg.bundleConfig.roleID;
+
+	const hostStreamRep = nodecg.Replicant('hostStream', { persistent: false });
 
 	const client = new Discord.Client();
 	client.once('ready', () => {
@@ -44,7 +46,7 @@ module.exports = function (nodecg) {
 				.addField("Disconnecting from a Voice Channel", "<@" + client.user.id + "> disconnect\nThe bot will stop capturing audio and disconnect from the voice channel.")
 				.addField("Changing a User's Volume", "<@" + client.user.id + "> volume <user> <volumeLevel>\nThe bot will change the volume of the specified user. `volumeLevel` must be between 1 and 100.")
 				.setThumbnail(client.user.displayAvatarURL())
-				.setFooter("DACBot made by nicnacnic")
+				.setFooter("DACBot made by nicnacnic. Edited for AusSpeedruns by Clubwho.")
 				.setTimestamp()
 			message.channel.send(helpEmbed);
 		})
@@ -64,7 +66,7 @@ module.exports = function (nodecg) {
 			if (connection !== undefined) {
 				for (let i = 0; i < currentMembers.length; i++) {
 					if (currentMembers[i].id === user) {
-						currentMembers[i].mixer.setVolume(volume)
+						// currentMembers[i].mixer.setVolume(volume)
 						break;
 					}
 				}
@@ -97,12 +99,12 @@ module.exports = function (nodecg) {
 			if (connection !== undefined && newMember.id !== client.user.id) {
 				if (oldMember.channelID !== connection.channel.id && newMember.channelID === connection.channel.id) {
 					let i = currentMembers.length;
-					currentMembers.push({ id: newMember.id, audio: '', mixer: '' })
+					currentMembers.push({ id: newMember.id, audio: '' })
 					currentMembers[i].audio = connection.receiver.createStream(currentMembers[i].id, { mode: 'pcm', end: 'manual' });
-					currentMembers[i].mixer = mixer.input({
-						volume: 100
-					});
-					currentMembers[i].audio.pipe(currentMembers[i].mixer);
+					// currentMembers[i].mixer = mixer.input({
+					// 	volume: 100
+					// });
+					// currentMembers[i].audio.pipe(currentMembers[i].mixer);
 					let username, muteState;
 					if (newMember.member.nickname === null)
 						username = newMember.member.user.username;
@@ -160,18 +162,18 @@ module.exports = function (nodecg) {
 	async function record(channelID) {
 		connection = await client.channels.cache.get(channelID).join();
 
-		mixer = new AudioMixer.Mixer({
-			channels: 2,
-			bitDepth: 16,
-			sampleRate: 48000,
-		});
+		// mixer = new AudioMixer.Mixer({
+		// 	channels: 2,
+		// 	bitDepth: 16,
+		// 	sampleRate: 48000,
+		// });
 
-		speaker = new Speaker({
-			channels: 2,
-			bitDepth: 16,
-			sampleRate: 48000,
-			device: nodecg.bundleConfig.outputDevice
-		});
+		// speaker = new Speaker({
+		// 	channels: 2,
+		// 	bitDepth: 16,
+		// 	sampleRate: 48000,
+		// 	device: nodecg.bundleConfig.outputDevice
+		// });
 
 		if (client.channels.cache.get(channelID).members.size > 1) {
 			client.channels.cache.get(channelID).members.forEach((member) => {
@@ -181,7 +183,7 @@ module.exports = function (nodecg) {
 						username = member.user.username;
 					else
 						username = member.nickname;
-					currentMembers.push({ id: member.user.id, audio: '', mixer: '' });
+					currentMembers.push({ id: member.user.id, audio: '' });
 					let muteState;
 					if (member.voice.selfMute || member.voice.selfDeaf || member.voice.serverMute || member.voice.serverDeaf)
 						muteState = true;
@@ -192,14 +194,18 @@ module.exports = function (nodecg) {
 					memberList.value.push({ id: member.user.id, name: username, avatar: member.user.displayAvatarURL(), muted: muteState });
 				}
 			})
-			for (let i = 0; i < currentMembers.length; i++) {
-				currentMembers[i].audio = connection.receiver.createStream(currentMembers[i].id, { mode: 'pcm', end: 'manual' });
-				currentMembers[i].mixer = mixer.input({
-					volume: 100
-				});
-				currentMembers[i].audio.pipe(currentMembers[i].mixer);
+
+			if (currentMembers.length > 0) {
+				hostStreamRep.value = connection.receiver.createStream(currentMembers[0].id, { mode: 'pcm', end: 'manual' });
 			}
-			mixer.pipe(speaker);
+			// for (let i = 0; i < currentMembers.length; i++) {
+			// 	currentMembers[i].audio = connection.receiver.createStream(currentMembers[i].id, { mode: 'pcm', end: 'manual' });
+			// 	currentMembers[i].mixer = mixer.input({
+			// 		volume: 100
+			// 	});
+			// 	currentMembers[i].audio.pipe(currentMembers[i].mixer);
+			// }
+			// mixer.pipe(speaker);
 		}
 
 		silence = setInterval(function () {
@@ -219,8 +225,9 @@ module.exports = function (nodecg) {
 		}
 		memberList.value = [];
 		currentMembers = [];
-		mixer = [];
-		speaker = [];
+		// mixer = [];
+		// speaker = [];
+		hostStreamRep.value = undefined;
 		connection = undefined;
 		clearInterval(silence)
 	}
