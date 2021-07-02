@@ -2,7 +2,7 @@ const player = new PCMPlayer({
 	encoding: '16bitInt',
 	channels: 1,
 	sampleRate: 100000,
-	flushingTime: 2000
+	flushingTime: 5000
 });
 
 nodecg.listenFor('audio-buffer', (data) => {
