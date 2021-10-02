@@ -35,6 +35,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 exports.__esModule = true;
 var fs_1 = require("fs");
 var Discord = require("discord.js");
@@ -47,7 +56,7 @@ module.exports = function (nodecg) {
     var addMember = nodecg.Replicant('addMember', { persistent: false, defaultValue: null });
     var removeMember = nodecg.Replicant('removeMember', { persistent: false, defaultValue: null });
     var changeMute = nodecg.Replicant('changeMute', { persistent: false, defaultValue: null });
-    var speaking = nodecg.Replicant('speaking', { persistent: false, defaultValue: null });
+    var speaking = nodecg.Replicant('speaking', { persistent: false, defaultValue: [] });
     memberList.value = [];
     var roleID = nodecg.bundleConfig.roleID;
     var client = new Discord.Client();
@@ -96,7 +105,17 @@ module.exports = function (nodecg) {
             }
         });
         client.on('guildMemberSpeaking', function (member, memberSpeaking) {
-            speaking.value = { id: member.id, speaking: memberSpeaking.bitfield === 1 };
+            if (memberSpeaking.bitfield == 1) {
+                speaking.value = __spreadArray(__spreadArray([], speaking.value, true), [{ id: member.id, speaking: true }], false);
+            }
+            else {
+                var mutableSpeaking = __spreadArray([], speaking, true);
+                var index = mutableSpeaking.findIndex(function (speaking) { return speaking.id === member.id; });
+                if (index !== -1) {
+                    mutableSpeaking.splice(index, 1);
+                }
+                speaking.value = mutableSpeaking;
+            }
         });
         client.on('voiceStateUpdate', function (oldMember, newMember) {
             if (connection && newMember.id !== client.user.id) {

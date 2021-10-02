@@ -11,7 +11,7 @@ module.exports = (nodecg: any) => {
 	const addMember = nodecg.Replicant('addMember', { persistent: false, defaultValue: null });
 	const removeMember = nodecg.Replicant('removeMember', { persistent: false, defaultValue: null });
 	const changeMute = nodecg.Replicant('changeMute', { persistent: false, defaultValue: null });
-	const speaking = nodecg.Replicant('speaking', { persistent: false, defaultValue: null });
+	const speaking = nodecg.Replicant('speaking', { persistent: false, defaultValue: [] });
 	memberList.value = [];
 	const roleID: string = nodecg.bundleConfig.roleID;
 
@@ -69,7 +69,18 @@ module.exports = (nodecg: any) => {
 		});
 
 		client.on('guildMemberSpeaking', (member, memberSpeaking) => {
-			speaking.value = { id: member.id, speaking: memberSpeaking.bitfield === 1 };
+			if (memberSpeaking.bitfield == 1) {
+				speaking.value = [...speaking.value, { id: member.id, speaking: true }];
+			} else {
+				const mutableSpeaking = [...speaking];
+				const index = mutableSpeaking.findIndex(speaking => speaking.id === member.id);
+				
+				if (index !== -1) {
+					mutableSpeaking.splice(index, 1);
+				}
+				
+				speaking.value = mutableSpeaking;
+			}
 		});
 
 		client.on('voiceStateUpdate', (oldMember, newMember) => {

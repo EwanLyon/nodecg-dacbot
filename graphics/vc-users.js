@@ -5,9 +5,7 @@ const changeMute = nodecg.Replicant('changeMute')
 const speaking = nodecg.Replicant('speaking')
 
 NodeCG.waitForReplicants(memberList, addMember, removeMember, changeMute, speaking).then(() => {
-	console.log(JSON.parse(JSON.stringify(memberList.value)));
 	console.log(JSON.parse(JSON.stringify(speaking.value)));
-	console.log(JSON.parse(JSON.stringify(addMember.value)));
 
 	memberList.value.forEach(function (element) {
 		createElement(element);
