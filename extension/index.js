@@ -220,6 +220,11 @@ module.exports = function (nodecg) {
         connection = undefined;
         clearInterval(silence);
     }
+    function delayedSpeaking(speakingNewVal) {
+        setTimeout(function () {
+            speaking.value = speakingNewVal;
+        }, 2000);
+    }
     client.login(nodecg.bundleConfig.botToken);
 };
 function checkMute(voiceState) {

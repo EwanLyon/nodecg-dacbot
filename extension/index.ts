@@ -192,9 +192,16 @@ module.exports = (nodecg: any) => {
 		clearInterval(silence);
 	}
 
+	function delayedSpeaking(speakingNewVal: any[]) {
+		setTimeout(() => {
+			speaking.value = speakingNewVal;
+		}, 2000);
+	}
+
 	client.login(nodecg.bundleConfig.botToken);
 };
 
 function checkMute(voiceState: Discord.VoiceState) {
 	return voiceState.selfMute || voiceState.selfDeaf || voiceState.serverMute || voiceState.serverDeaf;
 }
+
