@@ -70,7 +70,7 @@ module.exports = (nodecg: any) => {
 
 		client.on('guildMemberSpeaking', (member, memberSpeaking) => {
 			if (memberSpeaking.bitfield == 1) {
-				speaking.value = [...speaking.value, { id: member.id, speaking: true }];
+				delayedSpeaking([...speaking.value, { id: member.id, speaking: true }]);
 			} else {
 				const mutableSpeaking = [...speaking];
 				const index = mutableSpeaking.findIndex(speaking => speaking.id === member.id);
@@ -79,7 +79,7 @@ module.exports = (nodecg: any) => {
 					mutableSpeaking.splice(index, 1);
 				}
 				
-				speaking.value = mutableSpeaking;
+				delayedSpeaking(mutableSpeaking);
 			}
 		});
 
@@ -195,7 +195,7 @@ module.exports = (nodecg: any) => {
 	function delayedSpeaking(speakingNewVal: any[]) {
 		setTimeout(() => {
 			speaking.value = speakingNewVal;
-		}, 2000);
+		}, 4000);
 	}
 
 	client.login(nodecg.bundleConfig.botToken);

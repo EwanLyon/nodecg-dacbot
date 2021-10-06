@@ -106,7 +106,7 @@ module.exports = function (nodecg) {
         });
         client.on('guildMemberSpeaking', function (member, memberSpeaking) {
             if (memberSpeaking.bitfield == 1) {
-                speaking.value = __spreadArray(__spreadArray([], speaking.value, true), [{ id: member.id, speaking: true }], false);
+                delayedSpeaking(__spreadArray(__spreadArray([], speaking.value, true), [{ id: member.id, speaking: true }], false));
             }
             else {
                 var mutableSpeaking = __spreadArray([], speaking, true);
@@ -114,7 +114,7 @@ module.exports = function (nodecg) {
                 if (index !== -1) {
                     mutableSpeaking.splice(index, 1);
                 }
-                speaking.value = mutableSpeaking;
+                delayedSpeaking(mutableSpeaking);
             }
         });
         client.on('voiceStateUpdate', function (oldMember, newMember) {
@@ -223,7 +223,7 @@ module.exports = function (nodecg) {
     function delayedSpeaking(speakingNewVal) {
         setTimeout(function () {
             speaking.value = speakingNewVal;
-        }, 2000);
+        }, 4000);
     }
     client.login(nodecg.bundleConfig.botToken);
 };
