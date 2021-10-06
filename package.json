@@ -23,6 +23,7 @@
     "@polymer/polymer": "^3.4.1",
     "audio-mixer": "^2.1.4",
     "discord.js": "^12.5.3",
+    "ffmpeg-static": "^4.4.0",
     "naudiodon": "^2.3.5",
     "speaker": "github:nacgarg/node-speaker"
   }
