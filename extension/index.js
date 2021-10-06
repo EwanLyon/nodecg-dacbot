@@ -221,9 +221,10 @@ module.exports = function (nodecg) {
         clearInterval(silence);
     }
     function delayedSpeaking(speakingNewVal) {
-        setTimeout(function () {
-            speaking.value = speakingNewVal;
-        }, 4000);
+        var copiedValue = JSON.parse(JSON.stringify(speakingNewVal));
+        setTimeout(function (copiedValue) {
+            speaking.value = copiedValue;
+        }, 4000, copiedValue);
     }
     client.login(nodecg.bundleConfig.botToken);
 };

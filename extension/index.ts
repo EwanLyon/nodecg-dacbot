@@ -193,9 +193,10 @@ module.exports = (nodecg: any) => {
 	}
 
 	function delayedSpeaking(speakingNewVal: any[]) {
-		setTimeout(() => {
-			speaking.value = speakingNewVal;
-		}, 4000);
+		const copiedValue = JSON.parse(JSON.stringify(speakingNewVal));
+		setTimeout((copiedValue: any) => {
+			speaking.value = copiedValue;
+		}, 4000, copiedValue);
 	}
 
 	client.login(nodecg.bundleConfig.botToken);
