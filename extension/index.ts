@@ -12,6 +12,7 @@ module.exports = (nodecg: any) => {
 	const removeMember = nodecg.Replicant('removeMember', { persistent: false, defaultValue: null });
 	const changeMute = nodecg.Replicant('changeMute', { persistent: false, defaultValue: null });
 	const speaking = nodecg.Replicant('speaking', { persistent: false, defaultValue: [] });
+	const speakingDelay = nodecg.Replicant('speakingDelay', { persistent: true, defaultValue: 2000 });
 	memberList.value = [];
 	const roleID: string = nodecg.bundleConfig.roleID;
 
@@ -196,7 +197,7 @@ module.exports = (nodecg: any) => {
 		const copiedValue = JSON.parse(JSON.stringify(speakingNewVal));
 		setTimeout((copiedValue: any) => {
 			speaking.value = copiedValue;
-		}, 4000, copiedValue);
+		}, speakingDelay.value, copiedValue);
 	}
 
 	client.login(nodecg.bundleConfig.botToken);
